@@ -29,7 +29,10 @@ export default function App() {
     if(!chainsList) return;
 
     const filtered = Object.values(chainsList)
-      .filter(chain => chain.name?.toLowerCase().includes(query.toLowerCase()));
+      .filter(chain =>
+        chain.address?.includes(query.toLowerCase())
+        ||
+        chain.name?.toLowerCase().includes(query.toLowerCase()));
 
     setFilteredChain(filtered);
   };
