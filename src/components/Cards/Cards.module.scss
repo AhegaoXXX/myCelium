@@ -1,0 +1,40 @@
+.wrap_cards {
+  margin-top: 68px;
+
+  .head {
+    display: flex;
+    justify-content: space-between;
+    padding: 11px 21px;
+
+
+    .left_side {
+      display: flex;
+    }
+
+    p:nth-child(2) {
+      margin-left: 28px;
+    }
+
+    p:last-child {
+      margin-left: 122px;
+    }
+
+    @media (max-width: 700px) {
+      padding: 10px 0;
+
+      p:last-child {
+        margin-left: 40px;
+      }
+    }
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+
+    @media (max-width: 900px) {
+      gap: 18px;
+    }
+  }
+}

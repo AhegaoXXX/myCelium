@@ -1,0 +1,27 @@
+.header {
+  padding: 73px 0 52px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+
+  .left_side {
+    display: flex;
+    align-items: center;
+    gap: 43px;
+  }
+
+  @media (max-width: 900px) {
+    padding: 39px 0 54px;
+
+    .img_wrap {
+      min-width: 38px;
+      width: 38px;
+      overflow: hidden;
+    }
+
+    .left_side {
+      gap: 23px;
+    }
+  }
+}

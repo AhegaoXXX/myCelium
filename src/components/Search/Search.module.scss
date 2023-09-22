@@ -1,0 +1,29 @@
+.label {
+  position: relative;
+
+  img {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translate(0, -50%);
+  }
+
+  .search {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #E4E3E8;
+    background: #FFF;
+    padding: 9px 9px 8px 35px;
+    color: #000;
+
+    &::placeholder {
+      color: #989898;
+      font-family: Inter;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+}
