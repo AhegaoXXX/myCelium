@@ -7,7 +7,7 @@ import { shortenAddress } from '@/common/helpers';
 const text = 'Connect Wallet';
 
 const ConnectButton:FC = () => {
-	const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
+	const { connect, connectors, error } = useConnect();
 	const { address, isConnected } = useAccount();
 	const { disconnect } = useDisconnect()
 
@@ -30,7 +30,7 @@ const ConnectButton:FC = () => {
 		}
 	}
 
-	if(error) return <div>{error.message}</div>;
+	if(error) alert(error.message);
 
 	return (
 		<button
@@ -39,11 +39,6 @@ const ConnectButton:FC = () => {
 			key={theConnector.id}
 			onClick={() => handleConnectWallet(theConnector)}>
 			{ address ? shortenedAddress : text }
-
-			{ !theConnector.ready && ' (unsupported)'  }
-            { isLoading &&
-                theConnector.id === pendingConnector?.id &&
-                ' (connecting)' }
 		</button>
 	)
 }
