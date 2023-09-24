@@ -29,14 +29,16 @@ export default function App() {
     if(!chainsList) return;
 
     const filtered = Object.values(chainsList)
-      .filter(chain => chain.name?.toLowerCase().includes(query.toLowerCase()));
+      .filter(chain =>
+        chain.name?.toLowerCase().includes(query.toLowerCase()));
 
     setFilteredChain(filtered);
   };
 
   const tokenAddresses =
-    (!!filteredChains.length && filteredChains)
-    || (chainsList && Object.keys(chainsList).slice(0, visibleChains));
+    (!!filteredChains.length && filteredChains.slice(0, visibleChains).map(chain =>  chain.address)) ||
+    (chainsList && Object.keys(chainsList).slice(0, visibleChains));
+    
 
   const contractCalls = tokenAddresses?.map((tokenAddress) => ({
     address: tokenAddress,
@@ -51,6 +53,9 @@ export default function App() {
 
     //Using "suspense: true" will crush the app because of filteredChains btw
   });
+
+  console.log(data);
+  
 
   const startupChains = async () => {
     const result = await getTokens(selectedId);
