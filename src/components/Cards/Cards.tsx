@@ -26,7 +26,7 @@ const Cards:FC<ICards> = ({chainsList, filteredList, balance, visibleChains, ref
 				if (a.balance > 0 && b.balance === 0) return -1;
 				else if (a.balance === 0 && b.balance > 0) return 1;
 				else return 0
-			});	
+			});
 
 	return (
 		<div className={classes.wrap_cards}>
@@ -40,14 +40,14 @@ const Cards:FC<ICards> = ({chainsList, filteredList, balance, visibleChains, ref
 			</div>
 			<div className={classes.cards}>
 				{newChainList?.map((chain, id: number, arr) =>
-						(<Card
-							refIntersection={id === arr.length-1 ? refIntersection : null}
-							key={id}
-							logo={chain.logoURI}
-							name={chain.name}
-							balance={chain.balance}
-							symbol={chain.symbol}
-						/>))}
+					(<Card
+						refIntersection={id === arr.length-1 ? refIntersection : null}
+						key={id}
+						logo={chain.logoURI}
+						name={chain.name}
+						balance={chain.balance}
+						symbol={chain.symbol}
+					/>))}
 			</div>
 		</div>
 	)

@@ -10,9 +10,11 @@ import { erc20ABI } from '@wagmi/core'
 import { useInView } from 'react-intersection-observer';
 
 
+const tokensLimit = 5;
+
 export default function App() {
   const [ selectedId, setSelectedId ] = useState('1');
-	const [ visibleChains, setVisibleChains ] = useState(5);
+	const [ visibleChains, setVisibleChains ] = useState(tokensLimit);
   const [ query, setQuery ] = useState('');
 
   const [ chainsList, setChainsList ] = useState<TTokenInfo[] | undefined>();
@@ -48,8 +50,7 @@ export default function App() {
   const { data: balance } = useContractReads({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     contracts: contractCalls as any,
-
-    //Using "suspense: true" will crush the app because of filteredChains btw
+    suspense: true,
   });
   
 
@@ -58,11 +59,13 @@ export default function App() {
     switchNetwork?.(+selectedId || 1)
     const result = await getTokens(selectedId);
     setQuery('')
-    setVisibleChains(5)
+    setVisibleChains(tokensLimit)
     if(result){
-      setChainsList(Object.values(result))
-      setFilteredChain(Object.values(result))
-      setFilteredChainKeys(Object.keys(result))
+      const resultValues = Object.values(result);
+      const resultKeys = Object.keys(result);
+      setChainsList(resultValues)
+      setFilteredChain(resultValues)
+      setFilteredChainKeys(resultKeys)
     }
   };
 
@@ -75,7 +78,7 @@ export default function App() {
 
   useEffect(() => {
 		if (inView) {
-			setVisibleChains(prev=> prev+5);
+			setVisibleChains(prev=> prev+tokensLimit);
 		}
 	}, [ inView ]);
 
