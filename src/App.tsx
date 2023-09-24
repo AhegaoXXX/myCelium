@@ -50,6 +50,7 @@ export default function App() {
   const { data: balance } = useContractReads({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     contracts: contractCalls as any,
+    allowFailure: true,
     suspense: true,
   });
   
