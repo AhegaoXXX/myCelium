@@ -30,6 +30,8 @@ export default function App() {
 
     const filtered = Object.values(chainsList)
       .filter(chain =>
+        chain.address?.includes(query.toLowerCase())
+        ||
         chain.name?.toLowerCase().includes(query.toLowerCase()));
 
     setFilteredChain(filtered);
@@ -53,9 +55,6 @@ export default function App() {
 
     //Using "suspense: true" will crush the app because of filteredChains btw
   });
-
-  console.log(data);
-  
 
   const startupChains = async () => {
     const result = await getTokens(selectedId);

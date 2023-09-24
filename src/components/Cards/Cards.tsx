@@ -20,6 +20,9 @@ interface ICards {
 }
 
 const Cards:FC<ICards> = ({chainsList, filteredList, balance, visibleChains, refIntersection}) => {
+	const cardsArray = chainsList &&
+		((!!filteredList?.length && filteredList) || Object.values(chainsList))?.slice(0, visibleChains);	
+	
 	return (
 		<div className={classes.wrap_cards}>
 			<div className={classes.head}>
@@ -31,18 +34,15 @@ const Cards:FC<ICards> = ({chainsList, filteredList, balance, visibleChains, ref
 				<p className='text'>{tokenFields.balance}</p>
 			</div>
 			<div className={classes.cards}>
-				{!!chainsList
-					&&
-					((!!filteredList?.length && filteredList) || Object.values(chainsList))
-						.slice(0, visibleChains)?.map((chain, id: number, arr) => (
-							<Card
-								refIntersection={id === arr.length-1 ? refIntersection : null}
-								key={id}
-								logo={chain.logoURI}
-								name={chain.name}
-								balance={Number(balance?.[id].result || 0)}
-								symbol={chain.symbol}
-							/>))}
+				{cardsArray?.map((chain, id: number, arr) =>
+						(<Card
+							refIntersection={id === arr.length-1 ? refIntersection : null}
+							key={id}
+							logo={chain.logoURI}
+							name={chain.name}
+							balance={Number(balance?.[id].result || 0)}
+							symbol={chain.symbol}
+						/>))}
 			</div>
 		</div>
 	)
