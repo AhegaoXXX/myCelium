@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/Header/Header';
 import Search from '@/components/Search/Search';
 import Cards from '@/components/Cards/Cards';
-import { IResponse, getTokens } from '@/common/constants';
+import { TTokenInfo, getTokens } from '@/common/constants';
 import './App.scss';
 
 import { useAccount, useContractReads, useSwitchNetwork } from 'wagmi'
@@ -13,11 +13,12 @@ import { useInView } from 'react-intersection-observer';
 export default function App() {
   const [ selectedId, setSelectedId ] = useState('1');
 	const [ visibleChains, setVisibleChains ] = useState(5);
-
-  const [ chainsList, setChainsList ] = useState<IResponse | undefined>();
-  const [ filteredChains, setFilteredChain ] = useState(Object.values(chainsList || {}));
-
   const [ query, setQuery ] = useState('');
+
+  const [ chainsList, setChainsList ] = useState<TTokenInfo[] | undefined>();
+  const [ filteredChains, setFilteredChain ] = useState<TTokenInfo[] | undefined>(Object.values(chainsList || {}));
+  const [ filteredChainsKeys, setFilteredChainKeys ] = useState<string[]>(Object.keys(chainsList || {}));
+
 
 	const { ref, inView } = useInView();
   const { address, isConnected } = useAccount();
@@ -28,7 +29,7 @@ export default function App() {
     if(!query) return;
     if(!chainsList) return;
 
-    const filtered = Object.values(chainsList)
+    const filtered = chainsList
       .filter(chain =>
         chain.address?.includes(query.toLowerCase())
         ||
@@ -37,33 +38,32 @@ export default function App() {
     setFilteredChain(filtered);
   };
 
-  const tokenAddresses =
-    (!!filteredChains.length && filteredChains.slice(0, visibleChains).map(chain =>  chain.address)) ||
-    (chainsList && Object.keys(chainsList).slice(0, visibleChains));
-    
-
-  const contractCalls = tokenAddresses?.map((tokenAddress) => ({
+  const contractCalls = filteredChainsKeys?.slice(0, visibleChains)?.map((tokenAddress) => ({
     address: tokenAddress,
     abi: erc20ABI,
     functionName: 'balanceOf',
     args: [address]
   }));
 
-  const { data } = useContractReads({
+  const { data: balance } = useContractReads({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     contracts: contractCalls as any,
 
     //Using "suspense: true" will crush the app because of filteredChains btw
   });
+  
 
   const startupChains = async () => {
+    if(!isConnected) return;
+    switchNetwork?.(+selectedId || 1)
     const result = await getTokens(selectedId);
-
-    if(isConnected) switchNetwork?.(+selectedId || 1);
     setQuery('')
-    setChainsList(result)
-    setFilteredChain(Object.values(result || {}))
     setVisibleChains(5)
+    if(result){
+      setChainsList(Object.values(result))
+      setFilteredChain(Object.values(result))
+      setFilteredChainKeys(Object.keys(result))
+    }
   };
 
 
@@ -86,7 +86,7 @@ export default function App() {
       <Cards
         chainsList={chainsList}
         filteredList={filteredChains}
-        balance={data}
+        balance={balance}
         visibleChains={visibleChains}
         refIntersection={ref}/>
     </div>

@@ -1,7 +1,7 @@
 import Card from '../Card/Card'
 import classes from './Cards.module.scss'
 import { FC } from 'react';
-import { IResponse, TTokenInfo } from '@/common/constants';
+import { TTokenInfo } from '@/common/constants';
 
 
 const tokenFields = {
@@ -12,7 +12,7 @@ const tokenFields = {
 }
 
 interface ICards {
-	chainsList: IResponse | undefined;
+	chainsList: TTokenInfo[] | undefined;
 	filteredList?:  TTokenInfo[];
 	balance: ({ error: Error; result?: undefined; status: "failure"; } | { error?: undefined; result: unknown; status: "success"; })[] | undefined;
 	visibleChains: number;
@@ -20,9 +20,14 @@ interface ICards {
 }
 
 const Cards:FC<ICards> = ({chainsList, filteredList, balance, visibleChains, refIntersection}) => {
-	const cardsArray = chainsList &&
-		((!!filteredList?.length && filteredList) || Object.values(chainsList))?.slice(0, visibleChains);	
-	
+	const newChainList = (filteredList && filteredList
+		|| chainsList && chainsList)?.slice(0, visibleChains)?.map((chain, id) =>
+			({...chain, balance: Number(balance?.[id].result || 0)})).sort((a, b) => {
+				if (a.balance > 0 && b.balance === 0) return -1;
+				else if (a.balance === 0 && b.balance > 0) return 1;
+				else return 0
+			});	
+
 	return (
 		<div className={classes.wrap_cards}>
 			<div className={classes.head}>
@@ -34,13 +39,13 @@ const Cards:FC<ICards> = ({chainsList, filteredList, balance, visibleChains, ref
 				<p className='text'>{tokenFields.balance}</p>
 			</div>
 			<div className={classes.cards}>
-				{cardsArray?.map((chain, id: number, arr) =>
+				{newChainList?.map((chain, id: number, arr) =>
 						(<Card
 							refIntersection={id === arr.length-1 ? refIntersection : null}
 							key={id}
 							logo={chain.logoURI}
 							name={chain.name}
-							balance={Number(balance?.[id].result || 0)}
+							balance={chain.balance}
 							symbol={chain.symbol}
 						/>))}
 			</div>
