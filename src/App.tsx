@@ -51,13 +51,11 @@ export default function App() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     contracts: contractCalls as any,
     allowFailure: true,
-    suspense: true,
+    // Using "suspense: true" will crush the app
   });
   
 
   const startupChains = async () => {
-    if(!isConnected) return;
-    switchNetwork?.(+selectedId || 1)
     const result = await getTokens(selectedId);
     setQuery('')
     setVisibleChains(tokensLimit)
@@ -68,6 +66,7 @@ export default function App() {
       setFilteredChain(resultValues)
       setFilteredChainKeys(resultKeys)
     }
+    if(isConnected) { switchNetwork?.(+selectedId || 1) }
   };
 
 
@@ -75,7 +74,7 @@ export default function App() {
     startupChains();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ selectedId ]);
+  }, [ selectedId, isConnected ]);
 
   useEffect(() => {
 		if (inView) {
